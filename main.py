@@ -15,11 +15,16 @@ LINE = "Five people begged me to cheat at chess; I refused, my bundle got reject
 
 
 def main() -> int:
+    # Gate: entry must be 1-100 chars, not only whitespace.
+    if not (1 <= len(LINE) <= 100) or not LINE.strip():
+        print(f"gate failed: line is {len(LINE)} chars", file=sys.stderr)
+        return 1
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
-    with open(path, "w", encoding="utf-8", newline="\n") as f:
-        f.write(LINE + "\n")
+    # Deterministic byte-exact write: single line + trailing newline.
+    with open(path, "wb") as f:
+        f.write((LINE + "\n").encode("utf-8"))
     return 0
 
 
